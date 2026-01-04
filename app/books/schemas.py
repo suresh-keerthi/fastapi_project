@@ -15,6 +15,7 @@ class BookRead(BookCreate):
     uid : UUID
     updated_at : datetime | None = None
     created_at : datetime
+    user_uid : UUID | None = None
 
 class BookUpdate(BaseModel):
     title: str  | None = None

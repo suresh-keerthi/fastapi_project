@@ -5,7 +5,7 @@ from datetime import datetime, timedelta, timezone
 from uuid import uuid4, UUID
 import jwt
 from app.config import config
-from app.db.redis import redis
+from app.db.redis import get_redis
 
 # i don't think using therdpool makes any difference because hasing is cpu bound
 # i think it is same as direclty hashing 
@@ -70,7 +70,10 @@ def decode_token(token:str):
 
 async def black_list_jti(jti:str, expiry: int):
     ttl =  expiry - int(datetime.now(timezone.utc).timestamp())
-    
+
+    if ttl <=0:
+        return 
+    redis = get_redis()
     await redis.set(
         name=jti,
         value="revoked",
@@ -79,5 +82,5 @@ async def black_list_jti(jti:str, expiry: int):
     )
 
 async def is_revoked(jti:str) -> bool:
-
+    redis = get_redis()
     return ((await redis.exists(jti)) == 1 )

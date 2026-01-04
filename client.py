@@ -9,5 +9,10 @@ redis = Redis(
 
 async def set():
     await redis.set(name="key", value="value", ex=60*60)
-    
+
+async def get():
+    value = await redis.get("key")    
+    print(value)
+
 asyncio.run(set())
+asyncio.run(get())

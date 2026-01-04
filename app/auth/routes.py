@@ -2,10 +2,11 @@ from fastapi import APIRouter,Depends,HTTPException, status
 from app.auth.schemas import UserCreate, UserRead, UserLogin
 from sqlmodel.ext.asyncio.session import AsyncSession
 from app.db.main import get_session
+from app.db.models import User
 from app.auth.services import AuthService
 from app.auth.utils import create_tokens
 from datetime import datetime, timedelta,timezone
-from app.auth.dependencies import AccessTokenBearer, RefreshTokenBearer , get_curr_user
+from app.auth.dependencies import AccessTokenBearer, RefreshTokenBearer , get_curr_user, RoleChecker
 from app.auth.utils import black_list_jti
 auth_service = AuthService()
 router = APIRouter()
@@ -56,9 +57,10 @@ async def login(login_data : UserLogin, session : AsyncSession = Depends(get_ses
     }
 
 
-@router.get("/me", response_model= UserRead)
-async def get_me():
-    pass
+@router.get("/me",dependencies=[Depends(RoleChecker(["admin", "user"]))], response_model= UserRead)
+async def get_me(user:User = Depends(get_curr_user)):
+    return user 
+     
 
 @router.get("/refresh_token")
 async def refresh(payload: dict = Depends(RefreshTokenBearer(auto_error=True))):
@@ -83,11 +85,3 @@ async def logout(payload:dict = Depends(AccessTokenBearer(True))):
     expiry = payload["exp"]
     await black_list_jti(jti, expiry)
     return {"message": "logged out successfully"}
-
-
-     
-
-     
-
-
-    

@@ -6,7 +6,7 @@ from typing import List
 from app.auth.services import AuthService
 from app.db.main import get_session
 from sqlmodel.ext.asyncio.session import AsyncSession
-from db.models import User
+from app.db.models import User
 
 auth_service = AuthService()
 security = HTTPBearer()
@@ -54,7 +54,7 @@ async def get_curr_user(payload: dict = Depends(AccessTokenBearer()), session:As
     return user
 
 
-
+#consider returning user, because sometimes i might have to call get_curr_user dependency again for user
 class RoleChecker:
     def __init__(self ,allowed_roles:List[str]):
             self.allowed_roles = allowed_roles
