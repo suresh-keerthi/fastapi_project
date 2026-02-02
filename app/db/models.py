@@ -14,7 +14,7 @@ class User(SQLModel, table=True):
         index=True,
         sa_column_kwargs={"server_default": text("gen_random_uuid()")}
     )
-
+    
     username: str
     firstname: str
     lastname: str

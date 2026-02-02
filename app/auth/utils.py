@@ -10,7 +10,6 @@ from app.db.redis import get_redis
 # i don't think using therdpool makes any difference because hasing is cpu bound
 # i think it is same as direclty hashing 
 
-
 pwd_context = CryptContext(
         schemes= ["bcrypt"],
         deprecated = "auto"
@@ -74,6 +73,7 @@ async def black_list_jti(jti:str, expiry: int):
     if ttl <=0:
         return 
     redis = get_redis()
+    
     await redis.set(
         name=jti,
         value="revoked",

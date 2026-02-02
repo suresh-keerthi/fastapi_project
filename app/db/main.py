@@ -22,7 +22,7 @@ async_session = sessionmaker(
         #we don't need this code to create tables if we are using alembic for migrations
 
 
-
+#i have to understand how this is working
 async def get_session():
     async with async_session() as session:
         yield session

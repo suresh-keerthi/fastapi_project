@@ -8,7 +8,7 @@ async def init_redis():
     _redis = Redis(
         host=config.REDIS_HOST,
         port=config.REDIS_PORT,
-        db=0,
+        db=0, #db index
         decode_responses=True,
     )
 

@@ -26,6 +26,22 @@ async def get_books(session: AsyncSession = Depends(get_session)):
     return books
 
 
+
+@router.get(
+    "/my_books",
+    response_model=List[BookRead],
+    dependencies=[Depends(RoleChecker(["user", "admin"]))],
+)
+async def get_my_books(session: AsyncSession = Depends(get_session), payload: dict = Depends(AccessTokenBearer())):
+    user_uid = payload["user"]["uid"]
+    books = await services.get_books_by_user(session, user_uid)
+    if not books:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="no books found"
+        )
+    return books
+
+
 @router.get(
     "/{book_id}",
     response_model=BookRead,
@@ -34,16 +50,6 @@ async def get_books(session: AsyncSession = Depends(get_session)):
 async def get_book(book_id: UUID, seession: AsyncSession = Depends(get_session)):
     book = await services.get_book_by_id(book_id)
     return book
-
-
-@router.get(
-    "/my_books",
-    response_model=List[BookRead],
-    dependencies=[Depends(RoleChecker(["user", "admin"]))],
-)
-
-async def get_my_books(session: AsyncSession = Depends(get_session)):
-
 
 
 @router.post(

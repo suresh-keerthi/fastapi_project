@@ -14,5 +14,8 @@ async def get():
     value = await redis.get("key")    
     print(value)
 
-asyncio.run(set())
-asyncio.run(get())
+async def main():
+    await set()
+    await get()
+    
+asyncio.run(main())

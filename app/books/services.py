@@ -13,6 +13,11 @@ async def get_books(session: AsyncSession) -> List[Book]:
     return results.all()
 
 
+async def get_books_by_user(session: AsyncSession, user_uid: UUID) -> List[Book]:
+    stmt = select(Book).where(Book.user_uid == user_uid)
+    results = await session.exec(stmt)
+    return results.all()
+
 async def create_book(user_uid : UUID, book_body: BookCreate, session: AsyncSession) -> Book:
     book_dict = book_body.model_dump()
     book = Book(**book_dict)

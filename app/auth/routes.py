@@ -4,10 +4,10 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from app.db.main import get_session
 from app.db.models import User
 from app.auth.services import AuthService
-from app.auth.utils import create_tokens
+from app.auth.utils import create_tokens, black_list_jti
 from datetime import datetime, timedelta,timezone
 from app.auth.dependencies import AccessTokenBearer, RefreshTokenBearer , get_curr_user, RoleChecker
-from app.auth.utils import black_list_jti
+
 auth_service = AuthService()
 router = APIRouter()
 
@@ -36,7 +36,6 @@ async def login(login_data : UserLogin, session : AsyncSession = Depends(get_ses
         raise HTTPException(status_code= status.HTTP_401_UNAUTHORIZED,
                             detail= "invalid credentials")
 
-    
     access_token = create_tokens(user_data={
         "uid": str(user.uid),
         "email": user.email,

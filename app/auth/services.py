@@ -4,6 +4,7 @@ from app.db.models import User
 from app.auth.schemas import UserCreate, UserLogin
 from app.auth.utils import hash_password, verify_password
 import uuid
+
 class AuthService:
     async def get_user_by_email(self, email:str , session:AsyncSession ) -> User | None:  
         stmt =  select(User).where(User.email == email)
@@ -17,14 +18,10 @@ class AuthService:
         user = result.one_or_none()
         return user
     
-
     async def user_exists(self, email:str, session:AsyncSession):
         user = await self.get_user_by_email(email, session)
         return True if user else False
     
-    
-    
-
     async def create_user(self, user_data: UserCreate, session: AsyncSession):
 
         password = user_data.password
@@ -38,8 +35,6 @@ class AuthService:
 
         return user
     
-
-
     async def verify_login(self, login_data: UserLogin, session: AsyncSession) -> User:
         
         user = await self.get_user_by_email(login_data.email, session)
@@ -52,7 +47,7 @@ class AuthService:
         )
 
         if password_matched:
-            return user        
+            return user       
         return None
 
 
