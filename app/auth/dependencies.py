@@ -11,6 +11,12 @@ from app.db.models import User
 auth_service = AuthService()
 security = HTTPBearer()
 
+#how httpbearer works it extracts the token from the authorization header and returns it as HTTPAuthorizationCredentials object
+# we can then use this object to get the token and verify it
+# we can create our own class that inherits from HTTPBearer and override the __call__ method to add our own logic
+#why use it when we can directly get the token from the header in the route function?
+# because using dependency injection we can reuse the same logic in multiple routes without duplicating code
+
 class TokenBearer(HTTPBearer):
     def __init__(self, auto_error = True):
         super().__init__(auto_error=auto_error)
@@ -63,7 +69,7 @@ class RoleChecker:
         role = user.role
         if role not in self.allowed_roles:
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail= "you are not authorized")
-            
+        return True
 
 
 

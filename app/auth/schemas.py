@@ -5,7 +5,7 @@ from app.db.models import Book
 from typing import List
 
 class UserCreate(BaseModel):
-    username: str
+    username: str 
     firstname: str
     lastname: str
     email: EmailStr

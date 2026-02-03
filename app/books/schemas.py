@@ -2,7 +2,6 @@ from pydantic import BaseModel
 from datetime import date, datetime
 from uuid import UUID
 
-
 class BookCreate(BaseModel):
     title: str
     author: str

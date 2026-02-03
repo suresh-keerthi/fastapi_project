@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio.engine import create_async_engine
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import select 
-from alchemy_models import User
+from alchemy_models_test import User
 import asyncio
 
 

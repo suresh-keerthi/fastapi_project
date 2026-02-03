@@ -55,6 +55,12 @@ async def login(login_data : UserLogin, session : AsyncSession = Depends(get_ses
         "user": {"uid": str(user.uid), "email": user.email, "username": user.username}
     }
 
+#why we are not using any tokenbearer dependency here?
+# because we are getting current user using our custom dependency which already uses token bearer internally
+# also we are adding role checker dependency to check if user has required role to access this endpoint
+#which also uses token bearer internally
+#we are calling get_curr_user twice here once in dependency and once in function parameter
+# but this is not an issue because fastapi caches the result of dependency calls
 
 @router.get("/me",dependencies=[Depends(RoleChecker(["admin", "user"]))], response_model= UserRead)
 async def get_me(user:User = Depends(get_curr_user)):
@@ -76,6 +82,14 @@ async def refresh(payload: dict = Depends(RefreshTokenBearer(auto_error=True))):
             "access_token": access_token
     }
 
+
+#this only invalidates the access token by blacklisting its jti, but user can still use refresh token to get new access token
+#then what's the point of logout, when he can he hit refresh endpoint to get new access token?
+# the point is to invalidate the current access token so that if it is compromised it cannot be used anymore
+# in real world applications we can also invalidate the refresh token by blacklisting its jti as well
+# but for simplicity we are not doing that here
+#in real world applications we can also implement token rotation for refresh tokens
+# but for simplicity we are not doing that here
 
 @router.get("/logout")
 async def logout(payload:dict = Depends(AccessTokenBearer(True))):
