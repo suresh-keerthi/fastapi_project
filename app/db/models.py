@@ -35,6 +35,13 @@ class User(SQLModel, table=True):
 
     def __repr__(self):
         return f"<user {self.username}>" 
+    
+# moved link table above Book so Relationship can reference the class directly
+class BookTagLink(SQLModel, table=True):
+    __tablename__ = "book_tag_links"
+    book_uid: UUID = Field(foreign_key="books.uid", primary_key=True, index=True)
+    tag_uid: UUID = Field(foreign_key="tags.uid", primary_key=True, index=True)
+
 
 class Book(SQLModel, table=True):
     __tablename__ = "books"
@@ -60,10 +67,14 @@ class Book(SQLModel, table=True):
         back_populates="book",
         sa_relationship_kwargs={"lazy": "selectin"},
     )
+    tags: List["Tag"] = Relationship(
+        back_populates="related_books",
+        link_model= BookTagLink,
+        sa_relationship_kwargs={"lazy": "selectin"},
+    )
 
     def __repr__(self):
-        return f"<Book {self.title}"
-
+        return f"<Book {self.title}>"
 
 class Review(SQLModel, table=True):
     __tablename__ = "reviews"
@@ -89,3 +100,22 @@ class Review(SQLModel, table=True):
 
     def __repr__(self):
         return "f<review by {self.user.username}({self.user_uid}) on book {self.book.title}({self.book_uid})>"
+
+
+class Tag(SQLModel, table=True):
+    __tablename__ = "tags"
+    uid: UUID = Field(
+        primary_key=True,
+        index=True,
+        sa_column_kwargs={"server_default": text("gen_random_uuid()")},
+    )
+    name: str = Field(index=True, unique=True)
+    created_at: datetime = Field(sa_column_kwargs={"server_default": text("NOW()")})
+    updated_at: Optional[datetime] = None
+    related_books: List[Book] = Relationship(
+        back_populates="tags",
+        link_model=BookTagLink,
+        sa_relationship_kwargs={"lazy": "selectin"},
+    )
+    def __repr__(self):
+        return f"<tag {self.name}>"

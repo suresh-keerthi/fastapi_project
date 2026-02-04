@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from datetime import date, datetime
 from uuid import UUID
 
@@ -9,6 +9,7 @@ class BookCreate(BaseModel):
     page_count: int
     language: str
     published_date: date
+    # tags: list[str] = Field(default_factory=list)
 
 class BookRead(BookCreate):
     uid : UUID
@@ -23,3 +24,5 @@ class BookUpdate(BaseModel):
     page_count: int | None = None
     language: str | None = None
     published_date: date | None = None
+
+
