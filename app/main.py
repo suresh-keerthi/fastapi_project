@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 from app.db.main import engine #, init_db
 from app.books.routes import router as book_router
 from app.auth.routes import router as auth_router
+from app.reviews.routes import review_router
 from app.db.redis import init_redis, close_redis
 #we don't need this init_db function here anymore since we are using alembic for migrations
 
@@ -21,6 +22,8 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan, )
 app.include_router(book_router, prefix="/books")
 app.include_router(auth_router, prefix="/auth")
+app.include_router(review_router, prefix="/reviews")
+
 
 @app.get("/", status_code = status.HTTP_200_OK)
 def root():

@@ -19,7 +19,9 @@ class User(SQLModel, table=True):
     hashed_password: str = Field(nullable=False)
     is_active: bool = True
     is_verified: bool = False
-    role: str = Field(nullable=False, sa_column_kwargs={"server_default": text("'user'")})
+    role: str = Field(
+        nullable=False, sa_column_kwargs={"server_default": text("'user'")}
+    )
     created_at: datetime = Field(sa_column_kwargs={"server_default": text("NOW()")})
     updated_at: Optional[datetime] = None
     books: List["Book"] = Relationship(
@@ -31,6 +33,8 @@ class User(SQLModel, table=True):
         sa_relationship_kwargs={"lazy": "selectin"},
     )
 
+    def __repr__(self):
+        return f"<user {self.username}>" 
 
 class Book(SQLModel, table=True):
     __tablename__ = "books"
@@ -57,6 +61,9 @@ class Book(SQLModel, table=True):
         sa_relationship_kwargs={"lazy": "selectin"},
     )
 
+    def __repr__(self):
+        return f"<Book {self.title}"
+
 
 class Review(SQLModel, table=True):
     __tablename__ = "reviews"
@@ -68,7 +75,7 @@ class Review(SQLModel, table=True):
     book_uid: UUID = Field(foreign_key="books.uid")
     user_uid: UUID = Field(foreign_key="users.uid")
     review_text: str
-    rating: int = Field(ge=1, le=5)
+    rating: float = Field(ge=0, le=5)
     created_at: datetime = Field(sa_column_kwargs={"server_default": text("NOW()")})
     updated_at: Optional[datetime] = None
     book: Book = Relationship(
@@ -79,3 +86,6 @@ class Review(SQLModel, table=True):
         back_populates="reviews",
         sa_relationship_kwargs={"lazy": "selectin"},
     )
+
+    def __repr__(self):
+        return "f<review by {self.user.username}({self.user_uid}) on book {self.book.title}({self.book_uid})>"

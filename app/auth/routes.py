@@ -91,6 +91,7 @@ async def refresh(payload: dict = Depends(RefreshTokenBearer(auto_error=True))):
 #in real world applications we can also implement token rotation for refresh tokens
 # but for simplicity we are not doing that here
 
+
 @router.get("/logout")
 async def logout(payload:dict = Depends(AccessTokenBearer(True))):
     jti = payload["jti"]
