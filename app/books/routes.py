@@ -47,8 +47,8 @@ async def get_my_books(session: AsyncSession = Depends(get_session), payload: di
     response_model=BookRead,
     dependencies=[Depends(RoleChecker(["user", "admin"]))],
 )
-async def get_book(book_id: UUID, seession: AsyncSession = Depends(get_session)):
-    book = await services.get_book_by_id(book_id)
+async def get_book(book_id: UUID, session: AsyncSession = Depends(get_session)):
+    book = await services.get_book_by_id(book_id, session)
     return book
 
 
